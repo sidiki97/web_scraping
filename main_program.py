@@ -9,11 +9,16 @@ abcnews Web Scrapper App Main Program
 
 """
 
-# Dict used to avoid if/else branches
+
+# Dict used to determine is user wishes to continue with app
 explore = { 'y' : True, 'n' : False }
 
 # Boolean to check if user wishes to continue with app
 start = True
+
+# List of possible selection for category
+categories = ['G', 'I', 'U', 'P', 'B']
+
   
 """
 Start of App
@@ -39,6 +44,11 @@ while start:
   # Create scrapper object
   section_headlines = Abcnews_scrapper()
   
+  # Check selection
+  while selection not in categories:
+      selection = input('\tPlease select a category (Type Letter): \nGeneral (G)   U.S. (U)   International (I)   Business (B)   Politics (P)\n\nCategory: ').upper()
+      print()
+
   # Update self.url based on user selection
   section_headlines.determine_search_url(selection)
 
@@ -58,14 +68,25 @@ while start:
   Queue Management
 
   """
-  
+
   # Add stories to queue
   story_selections = input("Choose stories to add to queue (input numbers with spaces)? ")
   print()
 
   number_list = story_selections.split(' ')
 
+  new_number_list = []
+
+  # Check story_selections
   for num in number_list:
+    while not num.isdigit():
+      print('Invalid input: {0}'.format(num))
+      print()
+      num = input('Enter number (1-5) for article: ')
+    new_number_list.append(num)
+
+  # Add story title and link to queue
+  for num in new_number_list:
     story_info = {}
     story_info['title'] = section_headlines.get_story_title(int(num))
     story_info['link'] = section_headlines.access_headline(int(num))
@@ -118,6 +139,10 @@ while start:
   print()
   explore_other = input('Do you wish to explore other categories (y/n)? ').lower()
   print()
+
+  while explore_other not in explore.keys():
+    explore_other = input('Do you wish to explore other categories (y/n)? ').lower()
+    print()
 
   # Stay in app(while loop)
   start = explore[explore_other]
